@@ -1,5 +1,7 @@
 <template>
   <div class="detail container">
+    <i class="fas fa-spinner fa-spin" v-if="loading"></i>
+    <div v-if="!loading">
     <h1>{{movie.Title}}</h1>
     <img v-bind:src="movie.Poster"/>
     <p>{{movie.Plot}}</p>
@@ -13,6 +15,7 @@
     <h3>{{rating.Source}}</h3>
     <p>{{rating.Value}}</p>
     </div> 
+    </div>
   </div>
 </template>
 
@@ -21,14 +24,31 @@
 export default {
   name: "Detail",
   mounted:function (){
+    setTimeout(function(){ 
+      this.loading=false 
+      if (!this.movie){
+        this.message = "Connection to slow!"
+      }
+      }, 
+      3000);
    
     fetch(`http://www.omdbapi.com/?i=${this.$route.params.imdbID}&apikey=87d10179`)
       .then(response => response.json())
-      .then(data => this.movie = data);
+      .then(data => {
+        this.movie = data
+        this.loading = false
+      }).catch(err=>{
+        this.loading = false
+        this.message = "Connection to slow!"
+        console.log(err);
+      })
+      ;
   },
   data(){
     return {
-      movie:null
+      movie:null,
+      loading:true,
+      message:""
     }
   },
   methods:{
