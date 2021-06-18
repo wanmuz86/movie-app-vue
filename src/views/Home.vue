@@ -22,7 +22,9 @@ export default {
   },
   methods:{
     callApi:function(val){
-      alert(val)
+      fetch(`https://www.omdbapi.com/?s=${val}&apikey=87d10179`)
+      .then(response => response.json())
+      .then(data => this.movies = data["Search"]);
     }
   }
 };
